@@ -25,6 +25,27 @@ def compare_configurations(running_config_file, startup_config_file):
                 results_file.write(f'Added: {line[2:]}\n')
 
     return 'comparison_results.txt'
+def compare_configurations2(running_config_file, devices_file):
+    # Compare the running and startup configurations
+    devices_file_txt = 'devices-05.txt'
+    with open(running_config_file, 'r') as running_file, open(devices_file_txt, 'w') as devices_file:
+        running_lines = running_file.readlines()
+        devices_file = devices_file_txt.readlines()
+    differ = difflib.Differ()
+    diff = list(differ.compare(devices_file , running_lines ))
+
+    # Create a comparison_results file and save the differences
+    with open('comparison_results2.txt', 'w') as results_file2:
+        results_file2.write('Differences between running and startup configurations:\n')
+        for line in diff:
+            if line.startswith('  '):
+                continue  # Skip lines that are identical in both configurations
+            elif line.startswith('- '):
+                results_file2.write(f'Removed: {line[2:]}\n')
+            elif line.startswith('+ '):
+                results_file2.write(f'Added: {line[2:]}\n')
+
+    return 'comparison_results2.txt'
 
 # Define device parameters
 device = {
@@ -64,6 +85,8 @@ with open(startup_config_file, 'w') as output_file:
 # Compare the running and startup configurations and save results
 results_file = compare_configurations(running_config_file, startup_config_file)
 
+results_file2 = compare_configurations2('devices-05.txt', startup_config_file)
+
 # Display a success message - for a successful connection.
 print('------------------------------------------------------')
 print('')
@@ -74,6 +97,7 @@ print(f'Hostname: Router3')
 print(f'Running Configuration saved to: {running_config_file}')
 print(f'Startup Configuration saved to: {startup_config_file}')
 print(f'Comparison results saved to: {results_file}')
+print(f'Comparison results saved to: {results_file2}')
 print('')
 print('------------------------------------------------------')
 
